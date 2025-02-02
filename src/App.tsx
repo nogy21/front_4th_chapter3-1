@@ -22,8 +22,8 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  Heading,
   HStack,
+  Heading,
   IconButton,
   Input,
   Select,
@@ -35,17 +35,17 @@ import {
   Thead,
   Tooltip,
   Tr,
-  useToast,
   VStack,
+  useToast,
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 
-import { useCalendarView } from './hooks/useCalendarView.ts';
-import { useEventForm } from './hooks/useEventForm.ts';
-import { useEventOperations } from './hooks/useEventOperations.ts';
-import { useNotifications } from './hooks/useNotifications.ts';
-import { useSearch } from './hooks/useSearch.ts';
-import { Event, EventForm, RepeatType } from './types';
+import { useCalendarView } from './hooks/useCalendarView';
+import { useEventForm } from './hooks/useEventForm';
+import { useEventOperations } from './hooks/useEventOperations';
+import { useNotifications } from './hooks/useNotifications';
+import { useSearch } from './hooks/useSearch';
+import type { Event, EventForm, RepeatType } from './types';
 import {
   formatDate,
   formatMonth,

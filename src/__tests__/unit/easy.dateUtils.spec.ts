@@ -1,18 +1,23 @@
-import { Event } from '../../types';
+import { describe, expect, it } from 'vitest';
+
+// import { Event } from '../../types';
 import {
-  fillZero,
-  formatDate,
-  formatMonth,
-  formatWeek,
+  // fillZero,
+  // formatDate,
+  // formatMonth,
+  // formatWeek,
+  // getEventsForDay,
+  // getWeekDates,
+  // getWeeksAtMonth,
+  // isDateInRange,
   getDaysInMonth,
-  getEventsForDay,
-  getWeekDates,
-  getWeeksAtMonth,
-  isDateInRange,
 } from '../../utils/dateUtils';
 
 describe('getDaysInMonth', () => {
-  it('1월은 31일 수를 반환한다', () => {});
+  it('1월은 31일 수를 반환한다', () => {
+    const result = getDaysInMonth(new Date().getFullYear(), 1);
+    expect(result).toBe(31);
+  });
 
   it('4월은 30일 일수를 반환한다', () => {});
 

@@ -5,10 +5,10 @@ import {
   setupMockHandlerCreation,
   setupMockHandlerDeletion,
   setupMockHandlerUpdating,
-} from '../../__mocks__/handlersUtils.ts';
-import { useEventOperations } from '../../hooks/useEventOperations.ts';
-import { server } from '../../setupTests.ts';
-import { Event } from '../../types.ts';
+} from '../../__mocks__/handlersUtils';
+import { useEventOperations } from '../../hooks/useEventOperations';
+import { server } from '../../setupTests';
+import { Event } from '../../types';
 
 it('저장되어있는 초기 이벤트 데이터를 적절하게 불러온다', async () => {});
 
