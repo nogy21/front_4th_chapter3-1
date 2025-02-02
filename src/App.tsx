@@ -104,7 +104,7 @@ function App() {
   } = useEventForm();
 
   const { events, saveEvent, deleteEvent } = useEventOperations(Boolean(editingEvent), () =>
-    setEditingEvent(null)
+    setEditingEvent(null),
   );
 
   const { notifications, notifiedEvents, setNotifications } = useNotifications(events);
@@ -168,13 +168,13 @@ function App() {
   const renderWeekView = () => {
     const weekDates = getWeekDates(currentDate);
     return (
-      <VStack data-testid="week-view" align="stretch" w="full" spacing={4}>
-        <Heading size="md">{formatWeek(currentDate)}</Heading>
-        <Table variant="simple" w="full">
+      <VStack data-testid='week-view' align='stretch' w='full' spacing={4}>
+        <Heading size='md'>{formatWeek(currentDate)}</Heading>
+        <Table variant='simple' w='full'>
           <Thead>
             <Tr>
               {weekDays.map((day) => (
-                <Th key={day} width="14.28%">
+                <Th key={day} width='14.28%'>
                   {day}
                 </Th>
               ))}
@@ -183,8 +183,8 @@ function App() {
           <Tbody>
             <Tr>
               {weekDates.map((date) => (
-                <Td key={date.toISOString()} height="100px" verticalAlign="top" width="14.28%">
-                  <Text fontWeight="bold">{date.getDate()}</Text>
+                <Td key={date.toISOString()} height='100px' verticalAlign='top' width='14.28%'>
+                  <Text fontWeight='bold'>{date.getDate()}</Text>
                   {filteredEvents
                     .filter((event) => new Date(event.date).toDateString() === date.toDateString())
                     .map((event) => {
@@ -195,13 +195,13 @@ function App() {
                           p={1}
                           my={1}
                           bg={isNotified ? 'red.100' : 'gray.100'}
-                          borderRadius="md"
+                          borderRadius='md'
                           fontWeight={isNotified ? 'bold' : 'normal'}
                           color={isNotified ? 'red.500' : 'inherit'}
                         >
                           <HStack spacing={1}>
                             {isNotified && <BellIcon />}
-                            <Text fontSize="sm" noOfLines={1}>
+                            <Text fontSize='sm' noOfLines={1}>
                               {event.title}
                             </Text>
                           </HStack>
@@ -221,13 +221,13 @@ function App() {
     const weeks = getWeeksAtMonth(currentDate);
 
     return (
-      <VStack data-testid="month-view" align="stretch" w="full" spacing={4}>
-        <Heading size="md">{formatMonth(currentDate)}</Heading>
-        <Table variant="simple" w="full">
+      <VStack data-testid='month-view' align='stretch' w='full' spacing={4}>
+        <Heading size='md'>{formatMonth(currentDate)}</Heading>
+        <Table variant='simple' w='full'>
           <Thead>
             <Tr>
               {weekDays.map((day) => (
-                <Th key={day} width="14.28%">
+                <Th key={day} width='14.28%'>
                   {day}
                 </Th>
               ))}
@@ -243,16 +243,16 @@ function App() {
                   return (
                     <Td
                       key={dayIndex}
-                      height="100px"
-                      verticalAlign="top"
-                      width="14.28%"
-                      position="relative"
+                      height='100px'
+                      verticalAlign='top'
+                      width='14.28%'
+                      position='relative'
                     >
                       {day && (
                         <>
-                          <Text fontWeight="bold">{day}</Text>
+                          <Text fontWeight='bold'>{day}</Text>
                           {holiday && (
-                            <Text color="red.500" fontSize="sm">
+                            <Text color='red.500' fontSize='sm'>
                               {holiday}
                             </Text>
                           )}
@@ -264,13 +264,13 @@ function App() {
                                 p={1}
                                 my={1}
                                 bg={isNotified ? 'red.100' : 'gray.100'}
-                                borderRadius="md"
+                                borderRadius='md'
                                 fontWeight={isNotified ? 'bold' : 'normal'}
                                 color={isNotified ? 'red.500' : 'inherit'}
                               >
                                 <HStack spacing={1}>
                                   {isNotified && <BellIcon />}
-                                  <Text fontSize="sm" noOfLines={1}>
+                                  <Text fontSize='sm' noOfLines={1}>
                                     {event.title}
                                   </Text>
                                 </HStack>
@@ -291,9 +291,9 @@ function App() {
   };
 
   return (
-    <Box w="full" h="100vh" m="auto" p={5}>
-      <Flex gap={6} h="full">
-        <VStack w="400px" spacing={5} align="stretch">
+    <Box w='full' h='100vh' m='auto' p={5}>
+      <Flex gap={6} h='full'>
+        <VStack w='400px' spacing={5} align='stretch'>
           <Heading>{editingEvent ? '일정 수정' : '일정 추가'}</Heading>
 
           <FormControl>
@@ -303,15 +303,15 @@ function App() {
 
           <FormControl>
             <FormLabel>날짜</FormLabel>
-            <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+            <Input type='date' value={date} onChange={(e) => setDate(e.target.value)} />
           </FormControl>
 
-          <HStack width="100%">
+          <HStack width='100%'>
             <FormControl>
               <FormLabel>시작 시간</FormLabel>
-              <Tooltip label={startTimeError} isOpen={!!startTimeError} placement="top">
+              <Tooltip label={startTimeError} isOpen={!!startTimeError} placement='top'>
                 <Input
-                  type="time"
+                  type='time'
                   value={startTime}
                   onChange={handleStartTimeChange}
                   onBlur={() => getTimeErrorMessage(startTime, endTime)}
@@ -321,9 +321,9 @@ function App() {
             </FormControl>
             <FormControl>
               <FormLabel>종료 시간</FormLabel>
-              <Tooltip label={endTimeError} isOpen={!!endTimeError} placement="top">
+              <Tooltip label={endTimeError} isOpen={!!endTimeError} placement='top'>
                 <Input
-                  type="time"
+                  type='time'
                   value={endTime}
                   onChange={handleEndTimeChange}
                   onBlur={() => getTimeErrorMessage(startTime, endTime)}
@@ -346,7 +346,7 @@ function App() {
           <FormControl>
             <FormLabel>카테고리</FormLabel>
             <Select value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option value="">카테고리 선택</option>
+              <option value=''>카테고리 선택</option>
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
@@ -377,24 +377,24 @@ function App() {
           </FormControl>
 
           {isRepeating && (
-            <VStack width="100%">
+            <VStack width='100%'>
               <FormControl>
                 <FormLabel>반복 유형</FormLabel>
                 <Select
                   value={repeatType}
                   onChange={(e) => setRepeatType(e.target.value as RepeatType)}
                 >
-                  <option value="daily">매일</option>
-                  <option value="weekly">매주</option>
-                  <option value="monthly">매월</option>
-                  <option value="yearly">매년</option>
+                  <option value='daily'>매일</option>
+                  <option value='weekly'>매주</option>
+                  <option value='monthly'>매월</option>
+                  <option value='yearly'>매년</option>
                 </Select>
               </FormControl>
-              <HStack width="100%">
+              <HStack width='100%'>
                 <FormControl>
                   <FormLabel>반복 간격</FormLabel>
                   <Input
-                    type="number"
+                    type='number'
                     value={repeatInterval}
                     onChange={(e) => setRepeatInterval(Number(e.target.value))}
                     min={1}
@@ -403,7 +403,7 @@ function App() {
                 <FormControl>
                   <FormLabel>반복 종료일</FormLabel>
                   <Input
-                    type="date"
+                    type='date'
                     value={repeatEndDate}
                     onChange={(e) => setRepeatEndDate(e.target.value)}
                   />
@@ -412,30 +412,30 @@ function App() {
             </VStack>
           )}
 
-          <Button data-testid="event-submit-button" onClick={addOrUpdateEvent} colorScheme="blue">
+          <Button data-testid='event-submit-button' onClick={addOrUpdateEvent} colorScheme='blue'>
             {editingEvent ? '일정 수정' : '일정 추가'}
           </Button>
         </VStack>
 
-        <VStack flex={1} spacing={5} align="stretch">
+        <VStack flex={1} spacing={5} align='stretch'>
           <Heading>일정 보기</Heading>
 
-          <HStack mx="auto" justifyContent="space-between">
+          <HStack mx='auto' justifyContent='space-between'>
             <IconButton
-              aria-label="Previous"
+              aria-label='Previous'
               icon={<ChevronLeftIcon />}
               onClick={() => navigate('prev')}
             />
             <Select
-              aria-label="view"
+              aria-label='view'
               value={view}
               onChange={(e) => setView(e.target.value as 'week' | 'month')}
             >
-              <option value="week">Week</option>
-              <option value="month">Month</option>
+              <option value='week'>Week</option>
+              <option value='month'>Month</option>
             </Select>
             <IconButton
-              aria-label="Next"
+              aria-label='Next'
               icon={<ChevronRightIcon />}
               onClick={() => navigate('next')}
             />
@@ -445,11 +445,11 @@ function App() {
           {view === 'month' && renderMonthView()}
         </VStack>
 
-        <VStack data-testid="event-list" w="500px" h="full" overflowY="auto">
+        <VStack data-testid='event-list' w='500px' h='full' overflowY='auto'>
           <FormControl>
             <FormLabel>일정 검색</FormLabel>
             <Input
-              placeholder="검색어를 입력하세요"
+              placeholder='검색어를 입력하세요'
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -459,11 +459,11 @@ function App() {
             <Text>검색 결과가 없습니다.</Text>
           ) : (
             filteredEvents.map((event) => (
-              <Box key={event.id} borderWidth={1} borderRadius="lg" p={3} width="100%">
-                <HStack justifyContent="space-between">
-                  <VStack align="start">
+              <Box key={event.id} borderWidth={1} borderRadius='lg' p={3} width='100%'>
+                <HStack justifyContent='space-between'>
+                  <VStack align='start'>
                     <HStack>
-                      {notifiedEvents.includes(event.id) && <BellIcon color="red.500" />}
+                      {notifiedEvents.includes(event.id) && <BellIcon color='red.500' />}
                       <Text
                         fontWeight={notifiedEvents.includes(event.id) ? 'bold' : 'normal'}
                         color={notifiedEvents.includes(event.id) ? 'red.500' : 'inherit'}
@@ -493,19 +493,19 @@ function App() {
                       알림:{' '}
                       {
                         notificationOptions.find(
-                          (option) => option.value === event.notificationTime
+                          (option) => option.value === event.notificationTime,
                         )?.label
                       }
                     </Text>
                   </VStack>
                   <HStack>
                     <IconButton
-                      aria-label="Edit event"
+                      aria-label='Edit event'
                       icon={<EditIcon />}
                       onClick={() => editEvent(event)}
                     />
                     <IconButton
-                      aria-label="Delete event"
+                      aria-label='Delete event'
                       icon={<DeleteIcon />}
                       onClick={() => deleteEvent(event.id)}
                     />
@@ -524,7 +524,7 @@ function App() {
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
               일정 겹침 경고
             </AlertDialogHeader>
 
@@ -543,7 +543,7 @@ function App() {
                 취소
               </Button>
               <Button
-                colorScheme="red"
+                colorScheme='red'
                 onClick={() => {
                   setIsOverlapDialogOpen(false);
                   saveEvent({
@@ -573,12 +573,12 @@ function App() {
       </AlertDialog>
 
       {notifications.length > 0 && (
-        <VStack position="fixed" top={4} right={4} spacing={2} align="flex-end">
+        <VStack position='fixed' top={4} right={4} spacing={2} align='flex-end'>
           {notifications.map((notification, index) => (
-            <Alert key={index} status="info" variant="solid" width="auto">
+            <Alert key={index} status='info' variant='solid' width='auto'>
               <AlertIcon />
-              <Box flex="1">
-                <AlertTitle fontSize="sm">{notification.message}</AlertTitle>
+              <Box flex='1'>
+                <AlertTitle fontSize='sm'>{notification.message}</AlertTitle>
               </Box>
               <CloseButton
                 onClick={() => setNotifications((prev) => prev.filter((_, i) => i !== index))}
