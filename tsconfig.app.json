@@ -4,7 +4,7 @@
     "lib": ["es6", "dom", "dom.iterable", "scripthost", "ES2018"],
     "jsx": "react-jsx",
     "rootDir": "./",
-    "module": "es2015", // module이 node에서 동작해야하는 경우(CommonJS인 경우)에는 moduleResolution의 값은 "node"로 자동 추론된다.
+    "module": "ESNext", // module이 node에서 동작해야하는 경우(CommonJS인 경우)에는 moduleResolution의 값은 "node"로 자동 추론된다.
     "baseUrl": ".",
     "moduleResolution": "bundler", // 모듈 해석 방식 설정
     "paths": {
