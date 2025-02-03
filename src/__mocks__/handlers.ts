@@ -48,9 +48,8 @@ export const handlers = [
   // request에 담긴 데이터를 받아와서 기존 이벤트를 삭제
   http.delete('/api/events/:id', ({ params }) => {
     const { id } = params;
-
     mockEvents.events = mockEvents.events.filter((event) => event.id !== id);
 
-    return HttpResponse.json(null, { status: 204 });
+    return new HttpResponse(null, { status: 204 });
   }),
 ];
