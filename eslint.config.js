@@ -111,7 +111,7 @@ export default [
 			"vitest/valid-expect": "error", // expect 사용 시 올바른 구문 준수 (e.g., 체인된 matcher 필수)
 
 			// 브라우저 호환성 (Compat) 규칙
-			"compat/compat": "warn", // 브라우저 호환성 문제 경고
+			"compat/compat": "off", // 브라우저 호환성 문제 경고 끄기
 
 			// 보안 관련 규칙 (Security)
 			"security/detect-object-injection": "warn", // 객체 속성 주입 방지
