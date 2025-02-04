@@ -13,6 +13,7 @@ const HOLIDAY_RECORD = {
   '2024-10-03': '개천절',
   '2024-10-09': '한글날',
   '2024-12-25': '크리스마스',
+  '2025-01-01': '신정',
 };
 
 type HolidayRecord = typeof HOLIDAY_RECORD;

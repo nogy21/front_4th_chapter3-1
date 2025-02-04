@@ -10,6 +10,11 @@ import {
 import App from '../App';
 import { Event } from '../types';
 
+const setup = (jsx: React.ReactNode) => ({
+  user: userEvent.setup(),
+  ...render(<ChakraProvider>{jsx}</ChakraProvider>),
+});
+
 // 일정 저장 함수
 const saveSchedule = async (
   user: UserEvent,
@@ -32,21 +37,13 @@ const saveSchedule = async (
 
 describe('일정 CRUD 및 기본 기능', () => {
   // 각 테스트 시작 전 App 렌더링, user 설정
-  let user: UserEvent;
-  beforeEach(() => {
-    render(
-      <ChakraProvider>
-        <App />
-      </ChakraProvider>,
-    );
-    user = userEvent.setup();
-  });
 
   it('입력한 새로운 일정 정보에 맞춰 모든 필드가 이벤트 리스트에 정확히 저장된다.', async () => {
     // ! HINT. event를 추가 제거하고 저장하는 로직을 잘 살펴보고, 만약 그대로 구현한다면 어떤 문제가 있을 지 고민해보세요.
     // event 추가/제거/저장 로직을 전체 테스트에서 진행한다면, 각 테스트가 독립적이지 못하고 순서에 따라 영향을 미치게 됨
     // 이를 해결하기 위해 각 테스트에서 독립적으로 실행될 수 있도록 새로운 핸들러 및 mockEvents 생성 필요
     setupMockHandlerCreation();
+    const { user } = setup(<App />);
 
     await saveSchedule(user, {
       title: '새 회의',
@@ -76,6 +73,7 @@ describe('일정 CRUD 및 기본 기능', () => {
 
   it('기존 일정의 세부 정보를 수정하면 변경사항이 정확히 반영된다', async () => {
     setupMockHandlerUpdating(); // handlerUtils에서 초기 데이터 설정 및 수정 핸들러 설정하여 테스트를 독립적으로 실행
+    const { user } = setup(<App />);
 
     // 기존 일정 조회
     await waitFor(async () => {
@@ -99,6 +97,7 @@ describe('일정 CRUD 및 기본 기능', () => {
 
   it('일정을 삭제하면 더 이상 조회되지 않는다', async () => {
     setupMockHandlerDeletion();
+    const { user } = setup(<App />);
 
     await waitFor(async () => {
       const eventList = within(await screen.getByTestId('event-list'));
@@ -114,17 +113,126 @@ describe('일정 CRUD 및 기본 기능', () => {
   });
 });
 
-// describe('일정 뷰', () => {
-//   it('주별 뷰를 선택 후 해당 주에 일정이 없으면, 일정이 표시되지 않는다.', async () => {});
+describe('일정 뷰', () => {
+  it('주별 뷰를 선택 후 해당 주에 일정이 없으면, 일정이 표시되지 않는다.', async () => {
+    setupMockHandlerCreation();
+    const { user } = setup(<App />);
 
-//   it('주별 뷰 선택 후 해당 일자에 일정이 존재한다면 해당 일정이 정확히 표시된다', async () => {});
+    // 주별 뷰 선택
+    await user.click(screen.getByRole('combobox', { name: 'view' }));
+    await user.click(screen.getByRole('option', { name: 'Week' }));
 
-//   it('월별 뷰에 일정이 없으면, 일정이 표시되지 않아야 한다.', async () => {});
+    // 이벤트 리스트에 아무런 일정도 없는지 확인
+    await waitFor(() => {
+      const eventList = within(screen.getByTestId('event-list'));
+      expect(eventList.queryByText('기존 회의')).not.toBeInTheDocument();
+      expect(eventList.queryByText('검색 결과가 없습니다.')).toBeInTheDocument();
+    });
+  });
 
-//   it('월별 뷰에 일정이 정확히 표시되는지 확인한다', async () => {});
+  it('주별 뷰 선택 후 해당 일자에 일정이 존재한다면 해당 일정이 정확히 표시된다', async () => {
+    vi.setSystemTime('2025-01-01');
+    setupMockHandlerCreation([
+      {
+        id: '1',
+        title: '회의',
+        date: '2025-01-01',
+        startTime: '10:00',
+        endTime: '11:00',
+        location: '회의실 A',
+        description: '회의 내용',
+        category: '업무',
+        notificationTime: 0,
+        repeat: {
+          type: 'none',
+          interval: 0,
+        },
+      },
+    ]);
+    const { user } = setup(<App />);
 
-//   it('달력에 1월 1일(신정)이 공휴일로 표시되는지 확인한다', async () => {});
-// });
+    // 주별 뷰 선택
+    await user.click(screen.getByRole('combobox', { name: 'view' }));
+    await user.click(screen.getByRole('option', { name: 'Week' }));
+
+    // 일정 추가 후 일정이 정확히 표시되는지 확인
+    await waitFor(async () => {
+      const eventList = within(await screen.getByTestId('event-list'));
+      expect(eventList.getByText('회의')).toBeInTheDocument();
+      expect(eventList.getByText('2025-01-01')).toBeInTheDocument();
+      expect(eventList.getByText('10:00 - 11:00')).toBeInTheDocument();
+      expect(eventList.getByText('회의실 A')).toBeInTheDocument();
+      expect(eventList.getByText('회의 내용')).toBeInTheDocument();
+      expect(eventList.getByText('카테고리: 업무')).toBeInTheDocument();
+    });
+  });
+
+  it('월별 뷰에 일정이 없으면, 일정이 표시되지 않아야 한다.', async () => {
+    setupMockHandlerCreation();
+    const { user } = setup(<App />);
+
+    // 월별 뷰 선택
+    await user.click(screen.getByRole('combobox', { name: 'view' }));
+    await user.click(screen.getByRole('option', { name: 'Month' }));
+
+    await waitFor(() => {
+      const eventList = within(screen.getByTestId('event-list'));
+      expect(eventList.queryByText('기존 회의')).not.toBeInTheDocument();
+      expect(eventList.queryByText('검색 결과가 없습니다.')).toBeInTheDocument();
+    });
+  });
+
+  it('월별 뷰에 일정이 정확히 표시되는지 확인한다', async () => {
+    vi.setSystemTime('2025-01-01');
+    setupMockHandlerCreation([
+      {
+        id: '1',
+        title: '회의',
+        date: '2025-01-01',
+        startTime: '10:00',
+        endTime: '11:00',
+        location: '회의실 A',
+        description: '회의 내용',
+        category: '업무',
+        notificationTime: 0,
+        repeat: {
+          type: 'none',
+          interval: 0,
+        },
+      },
+    ]);
+    const { user } = setup(<App />);
+
+    // 월별 뷰 선택
+    await user.click(screen.getByRole('combobox', { name: 'view' }));
+    await user.click(screen.getByRole('option', { name: 'Month' }));
+
+    await waitFor(async () => {
+      const eventList = within(await screen.getByTestId('event-list'));
+      expect(eventList.getByText('회의')).toBeInTheDocument();
+      expect(eventList.getByText('2025-01-01')).toBeInTheDocument();
+      expect(eventList.getByText('10:00 - 11:00')).toBeInTheDocument();
+      expect(eventList.getByText('회의실 A')).toBeInTheDocument();
+      expect(eventList.getByText('회의 내용')).toBeInTheDocument();
+      expect(eventList.getByText('카테고리: 업무')).toBeInTheDocument();
+    });
+  });
+
+  it('달력에 1월 1일이 공휴일(신정)으로 표시되는지 확인한다', async () => {
+    // 시스템 시간을 신정 날짜로 설정 (2025-01-01)
+    vi.setSystemTime(new Date('2025-01-01'));
+    setup(<App />);
+
+    // 달력에 1월이 표시되는지 확인
+    const calendar = screen.getByTestId('month-view');
+    const yearMonth = within(calendar).getByRole('heading');
+    expect(yearMonth.textContent).toContain('1월');
+
+    // 1월 1일이 신정으로 표시되는지 확인
+    const cell = within(calendar).getByText('1').closest('td');
+    expect(within(cell!).getByText(/신정/i)).toBeInTheDocument();
+  });
+});
 
 // describe('검색 기능', () => {
 //   it('검색 결과가 없으면, "검색 결과가 없습니다."가 표시되어야 한다.', async () => {});
