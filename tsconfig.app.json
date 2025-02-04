@@ -36,7 +36,9 @@
     "noUnusedParameters": true, // 사용하지 않는 파라미터가 있다면 에러
     "noImplicitReturns": true, // 함수에 return이 없는 경우 에러
     "noFallthroughCasesInSwitch": true, // Switch문이 이상하면 에러
-    "skipLibCheck": true // 타입 체킹을 스킵
+    "skipLibCheck": true, // 타입 체킹을 스킵
+
+    "types": ["vitest/globals"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
