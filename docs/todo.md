@@ -46,6 +46,15 @@
   - `notificationUtils`:
     - `getUpcomingEvents`: 알림 대상 이벤트 필터링 검증
     - `createNotificationMessage`: 알림 메시지 생성 검증
+  - `eventUtils`:
+    - 이벤트 필터링, 검색 및 정렬 기능 검증
+    - 검색어 입력에 따른 결과 반환, 대소문자 무시 처리, 날짜 범위(주간/월간) 조건 적용 등 다양한 시나리오 테스트
+  - `fetchHolidays`:
+    - 공휴일 데이터 API 호출 성공 시 정상 응답 데이터 확인
+    - 네트워크 오류, 잘못된 응답(예: 비정상적인 데이터 포맷 또는 빈 응답)에 따른 에러 처리 로직 검증
+  - `timeValidation`:
+    - 올바른 시간 형식(예: '14:30', '09:00')에 대한 유효성 확인
+    - 유효하지 않은 입력(예: 빈 문자열, 'invalid', '25:00' 등) 및 경계값('00:00', '23:59') 테스트
 
 - **Hooks 테스트**
 
@@ -58,8 +67,8 @@
 
 ## 작업 내용
 
-- `dateUtils.ts`, `eventUtils.ts`, `notificationUtils.ts` 등 유틸리티 함수에 대한 단위 테스트 작성
-- `useEventOperations.ts`, `useNotifications.ts` 등 훅에 대한 단위 테스트 구현
+- **유틸리티 함수 테스트**
+  - `dateUtils`, `eventOverlap`, `notificationUtils`의 경계값 및 예외 케이스에 대해 충분한 테스트 케이스 작성
 
 # 3. 코드 리팩토링 및 컴포넌트 분리
 
