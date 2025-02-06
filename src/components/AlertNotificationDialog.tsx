@@ -12,22 +12,25 @@ interface Props {
 }
 
 export const AlertNotificationDialog = ({ notifications, setNotifications }: Props) => {
-  console.log('AlertNotificationDialog');
+  const handleClose = (index: number) => {
+    setNotifications((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  if (notifications.length === 0) {
+    return null;
+  }
+
   return (
-    notifications.length > 0 && (
-      <VStack position='fixed' top={4} right={4} spacing={2} align='flex-end'>
-        {notifications.map((notification, index) => (
-          <Alert key={index} status='info' variant='solid' width='auto'>
-            <AlertIcon />
-            <Box flex='1'>
-              <AlertTitle fontSize='sm'>{notification.message}</AlertTitle>
-            </Box>
-            <CloseButton
-              onClick={() => setNotifications((prev) => prev.filter((_, i) => i !== index))}
-            />
-          </Alert>
-        ))}
-      </VStack>
-    )
+    <VStack position='fixed' top={4} right={4} spacing={2} align='flex-end'>
+      {notifications.map((notification, index) => (
+        <Alert key={index} status='info' variant='solid' width='auto'>
+          <AlertIcon />
+          <Box flex='1'>
+            <AlertTitle fontSize='sm'>{notification.message}</AlertTitle>
+          </Box>
+          <CloseButton onClick={() => handleClose(index)} />
+        </Alert>
+      ))}
+    </VStack>
   );
 };
