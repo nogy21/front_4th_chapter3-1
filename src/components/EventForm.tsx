@@ -176,7 +176,12 @@ export const EventForm = ({ events, eventForm, eventHandlers, editingEvent }: Pr
 
       <FormControl>
         <FormLabel>카테고리</FormLabel>
-        <Select value={category} onChange={(e) => setCategory(e.target.value)}>
+        <Select
+          aria-label='category-select'
+          title='카테고리 선택'
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
           <option value=''>카테고리 선택</option>
           {CATEGORIES.map((cat) => (
             <option key={cat} value={cat}>
@@ -196,6 +201,8 @@ export const EventForm = ({ events, eventForm, eventHandlers, editingEvent }: Pr
       <FormControl>
         <FormLabel>알림 설정</FormLabel>
         <Select
+          aria-label='notification-time'
+          title='알림 시간 선택'
           value={notificationTime}
           onChange={(e) => setNotificationTime(Number(e.target.value))}
         >
@@ -212,6 +219,8 @@ export const EventForm = ({ events, eventForm, eventHandlers, editingEvent }: Pr
           <FormControl>
             <FormLabel>반복 유형</FormLabel>
             <Select
+              aria-label='repeat-type-select'
+              title='반복 유형 선택'
               value={eventForm.repeat.type}
               onChange={(e) => setRepeatType(e.target.value as RepeatType)}
             >
