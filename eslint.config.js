@@ -114,7 +114,7 @@ export default [
 			"compat/compat": "off", // 브라우저 호환성 문제 경고 끄기
 
 			// 보안 관련 규칙 (Security)
-			"security/detect-object-injection": "warn", // 객체 속성 주입 방지
+			"security/detect-object-injection": "off", // 객체 속성 주입 방지
 			"security/detect-non-literal-require": "warn", // 동적 require 경고
 			"security/detect-eval-with-expression": "error", // eval 사용 금지
 

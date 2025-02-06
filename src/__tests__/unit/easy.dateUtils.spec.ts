@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 import { Event } from '../../types';
 import {
   fillZero,
