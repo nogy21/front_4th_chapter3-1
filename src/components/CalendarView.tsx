@@ -34,6 +34,7 @@ export const CalendarView = ({
       />
       <Select
         aria-label='view'
+        title='calendar view'
         value={view}
         onChange={(e) => setView(e.target.value as 'week' | 'month')}
       >
