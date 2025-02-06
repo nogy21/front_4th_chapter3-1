@@ -39,7 +39,7 @@ const initialState: EventFormState = {
 };
 
 type EventFormAction =
-  | { type: 'SET_FIELD'; field: keyof EventFormState; value: any }
+  | { type: 'SET_FIELD'; field: keyof EventFormState; value: unknown }
   | { type: 'RESET'; initialState: EventFormState }
   | { type: 'SET_EDITING_EVENT'; editingEvent: Event | null };
 
