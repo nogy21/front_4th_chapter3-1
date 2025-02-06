@@ -1,6 +1,7 @@
-import { Alert, AlertIcon, AlertTitle, Box, CloseButton, Flex, VStack } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 
+import { AlertNotificationDialog } from './components/AlertNotificationDialog';
 import { AlertOverlapDialog } from './components/AlertOverlapDialog';
 import { CalendarView } from './components/CalendarView';
 import { EventForm } from './components/EventForm';
@@ -134,21 +135,7 @@ function App() {
       />
 
       {/* 알림 모달 */}
-      {notifications.length > 0 && (
-        <VStack position='fixed' top={4} right={4} spacing={2} align='flex-end'>
-          {notifications.map((notification, index) => (
-            <Alert key={index} status='info' variant='solid' width='auto'>
-              <AlertIcon />
-              <Box flex='1'>
-                <AlertTitle fontSize='sm'>{notification.message}</AlertTitle>
-              </Box>
-              <CloseButton
-                onClick={() => setNotifications((prev) => prev.filter((_, i) => i !== index))}
-              />
-            </Alert>
-          ))}
-        </VStack>
-      )}
+      <AlertNotificationDialog notifications={notifications} setNotifications={setNotifications} />
     </Box>
   );
 }
