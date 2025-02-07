@@ -1,7 +1,9 @@
 import '@testing-library/jest-dom';
+import { act } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
 import { handlers } from './__mocks__/handlers';
+import { storeResetFns } from './__mocks__/zustand';
 
 // timezone 설정
 vi.stubEnv('TZ', 'UTC');
@@ -23,6 +25,12 @@ beforeEach(() => {
   expect.hasAssertions();
   // 테스트 실행 동안 고정된 시간 사용
   vi.setSystemTime(new Date('2024-10-15'));
+  // 모든 zustand store 초기화
+  act(() => {
+    storeResetFns.forEach((resetFn) => {
+      resetFn();
+    });
+  });
 });
 
 afterEach(() => {
