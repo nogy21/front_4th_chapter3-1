@@ -8,45 +8,32 @@ import {
   Input,
   Select,
   Tooltip,
-  useToast,
   VStack,
 } from '@chakra-ui/react';
-import { ChangeEvent } from 'react';
 
 import { CATEGORIES, NOTIFICATION_OPTIONS } from '../constants';
-import type { Event, RepeatType, EventForm as TEventForm } from '../types';
-import { findOverlappingEvents } from '../utils/eventOverlap';
+import { useAddOrUpdateEvent } from '../hooks/useAddOrUpdateEvent';
+import { createStore } from '../store/createStore';
+import { useEventFormStore } from '../store/useEventFormStore';
+import type { Event, RepeatType } from '../types';
 import { getTimeErrorMessage } from '../utils/timeValidation';
+
+const useEventFormSelector = createStore(useEventFormStore);
 
 interface Props {
   events: Event[];
-  eventForm: TEventForm & {
-    isRepeating: boolean;
-    startTimeError: string | null;
-    endTimeError: string | null;
-  };
   editingEvent: Event | null;
-  eventHandlers: {
-    setTitle: (title: string) => void;
-    setDate: (date: string) => void;
-    setDescription: (description: string) => void;
-    setLocation: (location: string) => void;
-    setCategory: (category: string) => void;
-    setNotificationTime: (notificationTime: number) => void;
-    setIsRepeating: (isRepeating: boolean) => void;
-    setOverlappingEvents: (events: Event[]) => void;
-    setIsOverlapDialogOpen: (isOpen: boolean) => void;
-    setRepeatType: (repeatType: RepeatType) => void;
-    setRepeatInterval: (repeatInterval: number) => void;
-    setRepeatEndDate: (repeatEndDate: string) => void;
-    handleStartTimeChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    handleEndTimeChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    saveEvent: (event: Event) => Promise<void>;
-    resetForm: () => void;
-  };
+  setOverlappingEvents: (events: Event[]) => void;
+  setIsOverlapDialogOpen: (isOpen: boolean) => void;
+  saveEvent: (event: Event) => Promise<void>;
 }
-export const EventForm = ({ events, eventForm, eventHandlers, editingEvent }: Props) => {
-  const toast = useToast();
+export const EventForm = ({
+  events,
+  editingEvent,
+  setOverlappingEvents,
+  setIsOverlapDialogOpen,
+  saveEvent,
+}: Props) => {
   const {
     title,
     date,
@@ -59,7 +46,21 @@ export const EventForm = ({ events, eventForm, eventHandlers, editingEvent }: Pr
     isRepeating,
     startTimeError,
     endTimeError,
-  } = eventForm;
+    repeat,
+  } = useEventFormSelector([
+    'title',
+    'date',
+    'startTime',
+    'endTime',
+    'description',
+    'location',
+    'category',
+    'notificationTime',
+    'isRepeating',
+    'startTimeError',
+    'endTimeError',
+    'repeat',
+  ]);
   const {
     setTitle,
     setDate,
@@ -71,57 +72,30 @@ export const EventForm = ({ events, eventForm, eventHandlers, editingEvent }: Pr
     setRepeatType,
     setRepeatInterval,
     setRepeatEndDate,
-    setOverlappingEvents,
-    setIsOverlapDialogOpen,
     handleStartTimeChange,
     handleEndTimeChange,
+  } = useEventFormSelector([
+    'setTitle',
+    'setDate',
+    'setDescription',
+    'setLocation',
+    'setCategory',
+    'setNotificationTime',
+    'setIsRepeating',
+    'setRepeatType',
+    'setRepeatInterval',
+    'setRepeatEndDate',
+    'handleStartTimeChange',
+    'handleEndTimeChange',
+  ]);
+
+  const { addOrUpdateEvent } = useAddOrUpdateEvent({
+    events,
+    editingEvent,
+    setOverlappingEvents,
+    setIsOverlapDialogOpen,
     saveEvent,
-    resetForm,
-  } = eventHandlers;
-
-  const addOrUpdateEvent = async () => {
-    if (!title || !date || !startTime || !endTime) {
-      toast({
-        title: '필수 정보를 모두 입력해주세요.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (startTimeError || endTimeError) {
-      toast({
-        title: '시간 설정을 확인해주세요.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    const eventData: Event | TEventForm = {
-      id: editingEvent ? editingEvent.id : undefined,
-      title,
-      date,
-      startTime,
-      endTime,
-      description,
-      location,
-      category,
-      repeat: eventForm.repeat,
-      notificationTime,
-    };
-
-    const overlapping = findOverlappingEvents(eventData, events);
-    if (overlapping.length > 0) {
-      setOverlappingEvents(overlapping);
-      setIsOverlapDialogOpen(true);
-    } else {
-      await saveEvent(eventData as Event);
-      resetForm();
-    }
-  };
+  });
 
   return (
     <VStack w='400px' spacing={5} align='stretch'>
@@ -221,7 +195,7 @@ export const EventForm = ({ events, eventForm, eventHandlers, editingEvent }: Pr
             <Select
               aria-label='repeat-type-select'
               title='반복 유형 선택'
-              value={eventForm.repeat.type}
+              value={repeat.type}
               onChange={(e) => setRepeatType(e.target.value as RepeatType)}
             >
               <option value='daily'>매일</option>
@@ -235,7 +209,7 @@ export const EventForm = ({ events, eventForm, eventHandlers, editingEvent }: Pr
               <FormLabel>반복 간격</FormLabel>
               <Input
                 type='number'
-                value={eventForm.repeat.interval}
+                value={repeat.interval}
                 onChange={(e) => setRepeatInterval(Number(e.target.value))}
                 min={1}
               />
@@ -244,7 +218,7 @@ export const EventForm = ({ events, eventForm, eventHandlers, editingEvent }: Pr
               <FormLabel>반복 종료일</FormLabel>
               <Input
                 type='date'
-                value={eventForm.repeat.endDate}
+                value={repeat.endDate}
                 onChange={(e) => setRepeatEndDate(e.target.value)}
               />
             </FormControl>

@@ -1,10 +1,12 @@
+import { ChakraProvider } from '@chakra-ui/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { EventFormWrapper } from '../../components/EventFormWrapper';
+import { EventForm } from '../../components/EventForm';
+import { useEventFormStore } from '../../store/useEventFormStore';
+import { Event } from '../../types';
 
-// 테스트용 이벤트 데이터
-const mockEvent = {
+const mockEvent: Event = {
   id: '1',
   title: '기존 일정',
   date: '2023-10-10',
@@ -17,22 +19,61 @@ const mockEvent = {
   repeat: { type: 'weekly' as const, interval: 1, endDate: '2023-12-31' },
 };
 
-const setup = ({ isEditMode = false } = {}) => {
-  const mockSaveEvent = vitest.fn(() => Promise.resolve());
-  const user = userEvent.setup();
+// Zustand 상태 초기화 및 설정
+const setupStore = (event?: Event) => {
+  useEventFormStore.setState({
+    title: event?.title || '',
+    date: event?.date || '',
+    startTime: event?.startTime || '',
+    endTime: event?.endTime || '',
+    description: event?.description || '',
+    location: event?.location || '',
+    category: event?.category || '',
+    notificationTime: event?.notificationTime || 10,
+    repeat: event?.repeat || { type: 'none', interval: 1, endDate: undefined },
+    editingEvent: event,
+  });
+};
 
-  const renderResult = render(
-    <EventFormWrapper saveEvent={mockSaveEvent} editingEvent={isEditMode ? mockEvent : null} />,
+const setup = (editingEvent?: Event) => {
+  setupStore(editingEvent);
+  const user = userEvent.setup();
+  const mockSaveEvent = vitest.fn(() => Promise.resolve());
+
+  render(
+    <ChakraProvider>
+      <EventForm
+        events={[]}
+        editingEvent={editingEvent || null}
+        saveEvent={mockSaveEvent}
+        setOverlappingEvents={vitest.fn()}
+        setIsOverlapDialogOpen={vitest.fn()}
+      />
+    </ChakraProvider>,
   );
 
   return {
     user,
     mockSaveEvent,
-    ...renderResult,
   };
 };
 
 describe('EventForm Component', () => {
+  beforeEach(() => {
+    useEventFormStore.setState({
+      title: '',
+      date: '',
+      startTime: '',
+      endTime: '',
+      description: '',
+      location: '',
+      category: '',
+      notificationTime: 10,
+      repeat: { type: 'none', interval: 1, endDate: undefined },
+      editingEvent: null,
+    });
+  });
+
   describe('일정 추가/수정 폼 렌더링', () => {
     it('일정 추가 모드에서는 빈 폼이 렌더링되어야 한다', () => {
       setup();
@@ -46,7 +87,7 @@ describe('EventForm Component', () => {
     });
 
     it('수정 모드에서는 기존 데이터가 폼에 표시되어야 한다', () => {
-      setup({ isEditMode: true });
+      setup(mockEvent);
 
       expect(screen.getByRole('heading')).toHaveTextContent('일정 수정');
       expect(screen.getByLabelText('제목')).toHaveValue('기존 일정');
@@ -100,7 +141,7 @@ describe('EventForm Component', () => {
     });
 
     it('기존 일정을 수정하고 저장하면 수정된 데이터로 저장되어야 한다', async () => {
-      const { user, mockSaveEvent } = setup({ isEditMode: true });
+      const { user, mockSaveEvent } = setup(mockEvent);
 
       // 기존 데이터가 폼에 표시되어 있는지 확인
       expect(screen.getByLabelText('제목')).toHaveValue('기존 일정');
@@ -155,7 +196,7 @@ describe('EventForm Component', () => {
     });
 
     it('수정 모드에서 필수 필드를 비우면 저장되지 않아야 한다', async () => {
-      const { user, mockSaveEvent } = setup({ isEditMode: true });
+      const { user, mockSaveEvent } = setup(mockEvent);
 
       // 제목 필드를 비움
       const titleInput = screen.getByLabelText('제목');
